@@ -1,0 +1,105 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "SHARES MICROSERVICE",
+    "description": "Facilitate sharing a post, getting share count and list of users of a particular post."
+  },
+  "host": "localhost:3000",
+  "basePath": "",
+  "schemes": [
+    "http"
+  ],
+  "tags": [
+    {
+      "name": "shares",
+      "description": "Everything about sharing a post."
+    }
+  ],
+  "paths": {
+    "/shares/{postId}/share": {
+      "put": {
+        "tags": [
+          "shares"
+        ],
+        "summary": "Share a post by postID.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{SUCCESS: Post shared successfully.}"
+          },
+          "404": {
+            "description": "{ERROR: Post not found.}"
+          },
+          "500": {
+            "description": "{ERROR: Something went wrong.}"
+          }
+        }
+      }
+    },
+    "/shares/{postId}/shareCount": {
+      "get": {
+        "tags": [
+          "shares"
+        ],
+        "summary": "Fetch the share count of a post by postID.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "schema": {
+              "$ref": "./src/database/models/share-post-model.js"
+            }
+          }
+        }
+      }
+    },
+    "/shares/{postId}/users": {
+      "get": {
+        "tags": [
+          "shares"
+        ],
+        "summary": "Fetch the users who shared a post by postID.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  }
+}

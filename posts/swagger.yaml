@@ -1,0 +1,87 @@
+openapi: 3.0.0
+info:
+  title: Posts API
+  description: This is the Posts API.
+  version: 0.1.9
+servers:
+  - url: http://localhost:8000/
+    description: Localhost server which is running in docker container locally
+  - url: http://staging-api.example.com
+    description: Server when we ned to have actual server.
+paths:
+  /:
+    get:
+      summary: Returns a string that confirms that the endpoint is up and running.
+      description: This is a health check endpoint.
+      responses:
+        '200':    # status code
+          description: Just a health check of this endpoint.
+          content:
+            application/json:
+              schema: 
+                type: string
+
+  /api/post/list:
+    get:
+      summary: Returns a list of posts.
+      description: This URL will return the list of posts present in the database.
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  content: string
+                  imageURL: string
+                  userInformation: object
+                  interactionCount: object
+                  approxReadingTime: number
+                  schedule: object
+                  isAudited: boolean
+  /api/post/{postId}:
+    get:
+      summary: Returns a post by Id.
+      description: This URL will return the individual post for the id provided.
+      responses:
+        '200':    # status code
+          description: A JSON object of post
+          content:
+            application/json:
+              schema: 
+                type: object
+                items: 
+                  content: string
+                  imageURL: string
+                  userInformation: object
+                  interactionCount: object
+                  approxReadingTime: number
+                  schedule: object
+                  isAudited: boolean
+  /api/post/list:
+    get:
+      summary: Returns a list of posts.
+      description: This URL will return the list of posts present in the database.
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: string
+  /api/post/list:
+    get:
+      summary: Returns a list of posts.
+      description: This URL will return the list of posts present in the database.
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: string

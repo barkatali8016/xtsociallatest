@@ -1,0 +1,150 @@
+version: "3.9"
+
+services:
+  #MongoDB services
+  mongo_db:
+    image: mongo:latest
+    restart: always
+    ports:
+      - 2717:27017
+    volumes:
+      - mongo_db:/data/db
+
+  #Rabbitmq services
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - 15672:15672
+      - 15671:15671
+      - 5672:5672
+    volumes:
+      - ./rabbitmq/lib:/var/lib/rabbitmq
+
+  # Wait for a bit
+  waitforrabbit:
+    image: dadarek/wait-for-dependencies
+    depends_on:
+      - rabbitmq
+    command: rabbitmq:5672
+
+  #Node users API service
+  users:
+    build:
+      context: ./users
+      dockerfile: Dockerfile
+    container_name: users
+    restart: always
+    ports:
+      - 8001:8001
+    volumes:
+      - ./users:/users/src/app/
+    env_file: users/.env.dev
+    depends_on:
+      - waitforrabbit
+      - mongo_db
+      - rabbitmq
+
+  #Node posts API service
+  posts:
+    build:
+      context: ./posts
+      dockerfile: Dockerfile
+    container_name: posts
+    restart: always
+    ports:
+      - 8000:8000
+    volumes:
+      - ./posts:/posts/src/app/
+    env_file: posts/.env.dev
+    depends_on:
+      - waitforrabbit
+      - mongo_db
+      - rabbitmq
+
+  #Node query API service
+  query:
+    build:
+      context: ./query
+      dockerfile: Dockerfile
+    container_name: query
+    restart: always
+    ports:
+      - 4000:4000
+    volumes:
+      - ./query:/query/src/app/
+    env_file: query/.env.dev
+    depends_on:
+      - waitforrabbit
+      - mongo_db
+      - rabbitmq
+
+      #Node comments API service
+  comments:
+    build:
+      context: ./comments
+      dockerfile: Dockerfile
+    container_name: comments
+    restart: always
+    ports:
+      - 8002:8002
+    volumes:
+      - ./comments:/comments/src/app/
+    env_file: comments/.env.dev
+    depends_on:
+      - waitforrabbit
+      - mongo_db
+      - rabbitmq
+
+  #Node shares API service
+  shares:
+    build:
+      context: ./shares
+      dockerfile: Dockerfile
+    container_name: shares
+    restart: always
+    ports:
+      - 8004:8004
+    volumes:
+      - ./shares:/shares/src/app
+    env_file: shares/.env.dev
+    depends_on:
+      - waitforrabbit
+      - mongo_db
+      - rabbitmq
+
+  #Node applauds API service
+  applauds:
+    build:
+      context: ./applauds
+      dockerfile: Dockerfile
+    container_name: applauds
+    restart: always
+    ports:
+      - 8003:8003
+    volumes:
+      - ./applauds:/applauds/src/app
+    env_file: applauds/.env.dev
+    depends_on:
+      - waitforrabbit
+      - mongo_db
+      - rabbitmq
+
+  #Node applauds API service
+  nginxproxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    container_name: nginxproxy
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - query
+      - posts
+      - users
+      - comments
+      - applauds
+      - shares
+
+volumes:
+  mongo_db: {}
